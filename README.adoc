@@ -1,0 +1,28 @@
+:toc:
+:icons: font
+:source-highlighter: prettify
+:project_id: white-rabbit
+
+This project walk you through the process of solving anagram detection challenge.
+
+=== Task
+
+A secret message exist, but it is hidden. Find the secret phrase that will let you to see it.
+
+Here is a couple of important hints to help you out:
+
+* An anagram of the phrase is: "poultry outwits ants"
+* There are three levels of difficulty to try your skills with
+* The MD5 hash of the easiest secret phrase is "e4820b45d2277f3844eac66c903e84be"
+* The MD5 hash of the more difficult secret phrase is "23170acc097c24edb98fc5488ab033fe"
+* The MD5 hash of the hard secret phrase is "665e5bcb0c20062fe8abaaf4628bb154"
+
+A list of english words is given for you, it should help you out.
+
+=== Helper utils
+
+In this task I have used some utils classes for file reading, logging and so on. Also used apache common library for comparing md5 sum.
+
+=== Solution
+
+TBD
