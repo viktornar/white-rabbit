@@ -34,6 +34,6 @@ public class App {
             System.exit(0);
         }
 
-        Solver.solve(anagramPhrase, wordlistLocation, md5hash, anagramDetectionType);
+        new Solver(anagramDetectionType).solve(anagramPhrase, wordlistLocation, md5hash);
     }
 }
