@@ -19,6 +19,10 @@ Here is a couple of important hints to help you out:
 
 A list of english words is given for you, it should help you out.
 
+=== Programming language
+
+I have decided to use Java 11 since I'm working with it right now and Java have a good performance comparing to Python or JavaScript when need to deal with a lot of operations and comparings.
+
 === Helper utils
 
 In this task I have used some utils classes for file reading, logging and so on. Also used apache common library for comparing md5 sum.
