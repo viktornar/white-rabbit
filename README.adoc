@@ -7,7 +7,8 @@ This project walk you through the process of solving anagram detection challenge
 
 === Task
 
-A secret message exist, but it is hidden. Find the secret phrase that will let you to see it.
+A secret message exist, but it is hidden.
+Find the secret phrase that will let you to see it.
 
 Here is a couple of important hints to help you out:
 
@@ -25,8 +26,118 @@ I have decided to use Java 11 since I'm working with it right now and Java have 
 
 === Helper utils
 
-In this task I have used some utils classes for file reading, logging and so on. Also used apache common library for comparing md5 sum.
+In this task I have used some utils classes for file reading, logging and so on.
+Also used apache common library for comparing md5 sum.
 
-=== Solution
+=== Problem statement
 
-TBD
+To solve this task we need to understand what anagram is and how we can detect anagram.
+Two strings are said to be anagrams of one another if you can turn the first string into the second by rearranging its letters.
+For example, "table" and "bleat" are anagrams, as are "tear" and "rate".
+
+=== Solutions for anagram detection
+
+.Brute force example
+[source,java]
+----
+class Checker {
+    private boolean areAnagrams(String first, String second) {
+        return areAnagramsRec("", first, second);
+    }
+    private boolean areAnagramsRec(String soFar, String remaining,
+                                   String target) {
+        if (remaining.length() == 0) {
+            return soFar.equals(target);
+        }
+        for (int i = 0; i < remaining.length(); i++) {
+            String whatsLeft = remaining.substring(0, i) +
+                    remaining.substring(i+1);
+            if (areAnagramsRec(soFar + remaining.charAt(i),
+                    whatsLeft, target)) return true;
+        }
+        return false;
+    }
+}
+----
+
+Another approach would be to count up how many times each character appears in each string and confirm that each string has the same number of each character as the other.
+This approach will work, but is slower in practice than the histogram based approach outlined later on.
+If you see this, watch for an easy edge case: if you don't check that the string lengths are the same, it's easy to accidentally return true because every character present in the first string appears with the same frequency in the second string, but not the other way around.
+The time complexity of this approach depends on the particular implementation.
+Usually, they all use O(1) space.
+
+.Counting characters example
+[source,java]
+----
+public class Checker {
+    public boolean areAnagrams(String left, String right) {
+        if (left.length() != right.length()) return false;
+        for (int i = 0; i < left.length(); i++) {
+            char currCh = left.charAt(i);
+            if (numCopiesOf(currCh, left) != numCopiesOf(currCh, right)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int numCopiesOf(char ch, String str) {
+        int result = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == ch) result++;
+        }
+        return result;
+    }
+}
+----
+
+Two strings are anagrams of one another if they're equal when their letters are sorted.
+This means that you can test for whether two strings are anagrams of one another by sorting the characters in each string and testing whether the sorted strings are equal.
+There are lots of different ways to sort an array of strings, some of which end up looking more like the approaches outlined later on.
+This type of solution is probably a "good" solution.
+With a standard sorting algorithm like quicksort or heapsort, it runs in time O(n log n).
+Using counting sort, this will run in time O(n) (though note that the counting sort solution ends up looking a lot more like the histogram approach we'll talk about later on).
+
+.Sorting characters example
+[source,java]
+----
+public class Checker {
+    public boolean areAnagrams(String left, String right) {
+        var leftChars = left.toCharArray();
+        var rightChars = right.toCharArray();
+        Arrays.sort(leftChars);
+        Arrays.sort(rightChars);
+        return Arrays.equals(leftChars, rightChars);
+    }
+}
+----
+
+This final approach works by building a frequency histogram of the characters in each
+string and checking whether those histograms are the same. There are lots of variations on this theme: you can build the histogram as an array or as a hash table, you can build histograms for each string and compare them, or build a histogram for one and then destructively modify it for the second, etc. You can even think of counting sort as belonging to this family. These approaches typically use O(n) time and O(1) space, making them among the fastest approaches to solving this problem.
+
+.Histogramming example
+[source,java]
+----
+public class Checker {
+public boolean areAnagrams(String left, String right) {
+        if (left.length() != right.length()) return false;
+
+        Map<Character, Integer> frequencies = new HashMap<>();
+
+        for (int i = 0; i < left.length(); i++) {
+            if (!frequencies.containsKey(left.charAt(i))) {
+                frequencies.put(left.charAt(i), 1);
+            } else {
+                frequencies.put(left.charAt(i), frequencies.get(left.charAt(i)) + 1);
+            }
+        }
+
+        for (int i = 0; i < right.length(); i++) {
+            if (!frequencies.containsKey(right.charAt(i))) return false;
+        }
+        return true;
+    }
+}
+----
+
+Decided to implement counting characters, histogram based and sorting based anagram detection.
