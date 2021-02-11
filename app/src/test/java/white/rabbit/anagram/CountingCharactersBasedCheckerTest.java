@@ -12,6 +12,8 @@ class CountingCharactersBasedCheckerTest {
         assertTrue(countingCharactersBasedChecker.areAnagrams("geeksforgeeks", "forgeeksgeeks"));
         assertTrue(countingCharactersBasedChecker.areAnagrams("table", "bleat"));
         assertTrue(countingCharactersBasedChecker.areAnagrams("tear", "rate"));
+        assertTrue(countingCharactersBasedChecker.areAnagrams("new york times", "monkeys write"));
+        assertTrue(countingCharactersBasedChecker.areAnagrams("forty five", "over fifty"));
     }
 
     @Test

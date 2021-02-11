@@ -13,6 +13,8 @@ class HistogramBasedCheckerTest {
         assertTrue(histogramBasedChecker.areAnagrams("geeksforgeeks", "forgeeksgeeks"));
         assertTrue(histogramBasedChecker.areAnagrams("table", "bleat"));
         assertTrue(histogramBasedChecker.areAnagrams("tear", "rate"));
+        assertTrue(histogramBasedChecker.areAnagrams("new york times", "monkeys write"));
+        assertTrue(histogramBasedChecker.areAnagrams("forty five", "over fifty"));
     }
 
     @Test

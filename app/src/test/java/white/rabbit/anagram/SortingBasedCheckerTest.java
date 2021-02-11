@@ -12,6 +12,8 @@ class SortingBasedCheckerTest {
         assertTrue(sortingBasedChecker.areAnagrams("geeksforgeeks", "forgeeksgeeks"));
         assertTrue(sortingBasedChecker.areAnagrams("table", "bleat"));
         assertTrue(sortingBasedChecker.areAnagrams("tear", "rate"));
+        assertTrue(sortingBasedChecker.areAnagrams("new york times", "monkeys write"));
+        assertTrue(sortingBasedChecker.areAnagrams("forty five", "over fifty"));
     }
 
     @Test
