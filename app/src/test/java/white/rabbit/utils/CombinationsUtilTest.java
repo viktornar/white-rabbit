@@ -11,9 +11,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CombinationsUtilTest {
     @Test
     void shouldAddAllSubsetThatTakeKOfTheRemainingElements() {
-        List<String> words = Arrays.asList("aaa", "bbb", "ccc");
-        List<List<String>> result = new ArrayList<>();
-        CombinationsUtil.combine(words, 2, result);
-        assertEquals(3, result.size());
+        List<String> words = Arrays.asList("aaa", "bbb", "ccc", "ddd", "eee", "fff");
+        List<List<String>> result = CombinationsUtil.combine(words, 2);
+        assertEquals(15, result.size());
     }
 }
