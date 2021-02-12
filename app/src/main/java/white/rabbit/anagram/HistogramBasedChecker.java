@@ -24,7 +24,8 @@ public class HistogramBasedChecker implements Checker {
         }
 
         for (int i = 0; i < r.length(); i++) {
-            if (!frequencies.containsKey(r.charAt(i))) return false;
+            if (!frequencies.containsKey(r.charAt(i)) || frequencies.get(r.charAt(i)) == 0) return false;
+            frequencies.put(r.charAt(i), frequencies.get(r.charAt(i)) - 1);
         }
         return true;
     }

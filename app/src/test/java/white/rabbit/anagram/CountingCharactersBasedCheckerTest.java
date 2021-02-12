@@ -21,5 +21,6 @@ class CountingCharactersBasedCheckerTest {
         assertFalse(countingCharactersBasedChecker.areAnagrams("beeksforbeeks", "forgeeksgeeks"));
         assertFalse(countingCharactersBasedChecker.areAnagrams("tear", "bleat"));
         assertFalse(countingCharactersBasedChecker.areAnagrams("table", "rate"));
+        assertFalse(countingCharactersBasedChecker.areAnagrams("nair slopily outworn", "poultry outwits ants"));
     }
 }
