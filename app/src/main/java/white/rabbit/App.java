@@ -13,7 +13,10 @@ public class App {
         String wordlistLocation = arguments.get(WORD_LIST_LOCATION);
         String md5hash = arguments.get(MD5HASH);
 
-        if (wordlistLocation == null || md5hash == null) {
+        if ( anagramPhrase == null || wordlistLocation == null || md5hash == null) {
+            System.out.printf(
+                    "--%s - was not specified. Usage example: --%s [anagram phrase]. Program will be terminated%n",
+                    ANAGRAM_PHRASE, ANAGRAM_PHRASE);
             System.out.println("or");
             System.out.printf(
                     "--%s - was not specified. Usage example: --%s [wordlist location]. Program will be terminated%n",

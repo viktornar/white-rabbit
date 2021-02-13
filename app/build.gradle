@@ -26,9 +26,9 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
     // This dependency is used by the application.
-    implementation 'com.google.guava:guava:29.0-jre'
-    implementation 'org.apache.commons:commons-lang3:3.11'
-    implementation 'commons-codec:commons-codec:1.15'
+    compile 'com.google.guava:guava:29.0-jre'
+    compile 'org.apache.commons:commons-lang3:3.11'
+    compile 'commons-codec:commons-codec:1.15'
 }
 
 application {
@@ -39,4 +39,18 @@ application {
 tasks.named('test') {
     // Use junit platform for unit tests.
     useJUnitPlatform()
+}
+
+jar {
+    // Defining manifest
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'white.rabbit.App'
+        )
+    }
+    // Add all libraries
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
