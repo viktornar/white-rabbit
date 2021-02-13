@@ -13,7 +13,7 @@ public class App {
         String wordlistLocation = arguments.get(WORD_LIST_LOCATION);
         String md5hash = arguments.get(MD5HASH);
 
-        if ( anagramPhrase == null || wordlistLocation == null || md5hash == null) {
+        if (anagramPhrase == null || wordlistLocation == null || md5hash == null) {
             System.out.printf(
                     "--%s - was not specified. Usage example: --%s [anagram phrase]. Program will be terminated%n",
                     ANAGRAM_PHRASE, ANAGRAM_PHRASE);
@@ -27,6 +27,15 @@ public class App {
             System.exit(0);
         }
 
-        Solver.solve(anagramPhrase, wordlistLocation, md5hash);
+        var before = System.currentTimeMillis();
+        var secretPhrase = Solver.solve(anagramPhrase, wordlistLocation, md5hash);
+        if (secretPhrase.isPresent()) {
+            System.out.printf("Found phrase `%s` with `%s`%n", secretPhrase.get(), md5hash);
+        } else {
+            System.out.println("Was not able to find secret phrase :(");
+        }
+        var after = System.currentTimeMillis();
+        var total = (after - before) / 1000.0;
+        System.out.printf("Takes %.3fs to solve%n", total);
     }
 }

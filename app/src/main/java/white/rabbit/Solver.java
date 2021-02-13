@@ -7,23 +7,20 @@ import white.rabbit.math.itertool.PermutationIterable;
 import white.rabbit.utils.AnagramCheckerUtil;
 import white.rabbit.utils.FileUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static white.rabbit.Constants.MAX_WORD_COUNT;
 
 public class Solver {
-    public static void solve(
+    public static Optional<String> solve(
             String anagramPhrase, String wordlistLocation, String md5hash) {
 
         System.out.printf(
                 "Trying to solve with args `%s`, `%s`, `%s` %n",
                 anagramPhrase, wordlistLocation, md5hash);
 
-        var before = System.currentTimeMillis();
+
         var words = FileUtil.readData(wordlistLocation);
 
         if (words.size() == 0) {
@@ -34,10 +31,8 @@ public class Solver {
         var anagramLength = anagramWords.length();
         var sortedWords = getSortedWords(anagramPhrase, words);
         var possibleWordsCombinations = groupWordsWithPossibleCombinations(anagramPhrase, anagramLength, sortedWords);
-        searchAndPrintPhrase(anagramWords, possibleWordsCombinations, md5hash);
-        var after = System.currentTimeMillis();
-        var total = (after - before) / 1000.0;
-        System.out.printf("Takes %.3fs to solve%n", total);
+
+        return searchSecretPhrase(anagramWords, possibleWordsCombinations, md5hash);
     }
 
     private static Map<String, List<String>> groupWordsWithPossibleCombinations(String anagramPhrase, int anagramLength, List<String> words) {
@@ -73,8 +68,10 @@ public class Solver {
                 .sorted().collect(Collectors.toList());
     }
 
-    private static void searchAndPrintPhrase(
+    private static Optional<String> searchSecretPhrase(
             String anagramWords, Map<String, List<String>> possibleWordsCombinations, String md5hash) {
+
+        Optional<String> secretPhrase = Optional.empty();
 
         searchloop:
         for (var i = 2; i <= MAX_WORD_COUNT; i++) {
@@ -95,8 +92,8 @@ public class Solver {
                             var maybePhrase = StringUtils.join(permutation, " ");
 
                             if (DigestUtils.md5Hex(maybePhrase).equals(md5hash)) {
-                                System.out.printf("Found phrase `%s` with `%s`%n", maybePhrase, md5hash);
-                                // No more reason to search. Exit all loops.
+                                secretPhrase = Optional.of(maybePhrase);
+                                // No more reason to search. Exit from all loops.
                                 break searchloop;
                             }
                         }
@@ -104,5 +101,7 @@ public class Solver {
                 }
             }
         }
+
+        return secretPhrase;
     }
 }
