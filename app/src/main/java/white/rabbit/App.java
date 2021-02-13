@@ -19,8 +19,8 @@ public class App {
                         arguments.get(ANAGRAM_DETECTION_TYPE) : Histogram.toString();
 
         if (anagramPhrase == null ||
-                        wordlistLocation == null ||
-                        md5hash == null) {
+                wordlistLocation == null ||
+                md5hash == null) {
             System.out.printf(
                     "--%s - was not specified. Usage example: --%s [anagram phrase]. Program will be terminated%n",
                     ANAGRAM_PHRASE, ANAGRAM_PHRASE);
@@ -34,6 +34,6 @@ public class App {
             System.exit(0);
         }
 
-        new Solver(anagramDetectionType).solve(anagramPhrase, wordlistLocation, md5hash);
+        new Solver().solve(anagramPhrase, wordlistLocation, md5hash);
     }
 }
