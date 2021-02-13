@@ -26,7 +26,6 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
     // This dependency is used by the application.
-    compile 'com.google.guava:guava:29.0-jre'
     compile 'org.apache.commons:commons-lang3:3.11'
     compile 'commons-codec:commons-codec:1.15'
 }
