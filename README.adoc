@@ -5,21 +5,6 @@
 :project_id: white-rabbit
 = White rabbit
 
-=== For impatient
-
-Got to project root bin directory and run.
-
-.Executing pre-builded jar
-[source,bash]
-----
-# For easy case
-java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location ".../wordlist" --md5hash e4820b45d2277f3844eac66c903e84be
-# For medium case
-java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../wordlist" --md5hash 23170acc097c24edb98fc5488ab033fe
-# For hard case
-java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../wordlist" --md5hash 665e5bcb0c20062fe8abaaf4628bb154
-----
-
 === Task
 
 A secret message exist, but it is hidden. Find the secret phrase that will let you to see it. Here is a couple of important hints to help you out:
