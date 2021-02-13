@@ -29,13 +29,13 @@ public class Solver {
 
         var anagramWords = StringUtils.remove(anagramPhrase, " ");
         var anagramLength = anagramWords.length();
-        var sortedWords = getSortedWords(anagramPhrase, words);
+        var sortedWords = getFilteredAndSortedWords(anagramPhrase, words);
         var possibleWordsCombinations = groupWordsWithPossibleCombinations(anagramPhrase, anagramLength, sortedWords);
 
         return searchSecretPhrase(anagramWords, possibleWordsCombinations, md5hash);
     }
 
-    private static Map<String, List<String>> groupWordsWithPossibleCombinations(String anagramPhrase, int anagramLength, List<String> words) {
+    static Map<String, List<String>> groupWordsWithPossibleCombinations(String phrase, int lettersCountInPhrase, List<String> words) {
         Map<String, List<String>> possibleWordsCombinationsForPhrase = new HashMap<>();
 
         for (var i = 0; i < words.size(); i++) {
@@ -46,7 +46,7 @@ public class Solver {
                 var combination = words.get(j);
                 var possiblePartOfPhrase = word + combination;
 
-                if (possiblePartOfPhrase.length() <= anagramLength && AnagramCheckerUtil.inAnagrams(anagramPhrase, possiblePartOfPhrase)) {
+                if (possiblePartOfPhrase.length() <= lettersCountInPhrase && AnagramCheckerUtil.inAnagrams(phrase, possiblePartOfPhrase)) {
                     combinations.add(combination);
                 }
 
@@ -60,7 +60,7 @@ public class Solver {
         return possibleWordsCombinationsForPhrase;
     }
 
-    private static List<String> getSortedWords(String anagramPhrase, List<String> words) {
+    static List<String> getFilteredAndSortedWords(String anagramPhrase, List<String> words) {
         return words.stream()
                 .filter(word -> AnagramCheckerUtil.inAnagrams(anagramPhrase, word))
                 .collect(Collectors.toSet())
@@ -68,7 +68,7 @@ public class Solver {
                 .sorted().collect(Collectors.toList());
     }
 
-    private static Optional<String> searchSecretPhrase(
+    static Optional<String> searchSecretPhrase(
             String anagramWords, Map<String, List<String>> possibleWordsCombinations, String md5hash) {
 
         Optional<String> secretPhrase = Optional.empty();
