@@ -46,6 +46,7 @@ public class Solver {
         for (var i = 0; i < sortedWords.size(); i++) {
             var word = sortedWords.get(i);
             List<String> combinations = new ArrayList<>();
+
             for (var j = i + 1; j < sortedWords.size(); j++) {
                 var combination = sortedWords.get(j);
                 var possiblePhrase = word + combination;
@@ -76,18 +77,22 @@ public class Solver {
 
         searchloop:
         for (var i = 2; i <= MAX_WORD_COUNT; i++) {
+
             for (var entry : possibleWordsCombinations.entrySet()) {
                 var word = entry.getKey();
                 var v = entry.getValue().stream().sorted().distinct().collect(Collectors.toList());
                 Iterable<List<String>> combinations = new CombinationIterable<>(i, v);
+
                 for (List<String> cw : combinations) {
                     cw.add(word);
-                    String phrase = StringUtils.join(cw, "");
+                    var phrase = StringUtils.join(cw, "");
 
                     if (AnagramCheckerUtil.areAnagrams(anagramWords, phrase)) {
                         var permutations = new PermutationIterable<>(cw);
+
                         for (var permutation : permutations) {
-                            String maybePhrase = StringUtils.join(permutation, " ");
+                            var maybePhrase = StringUtils.join(permutation, " ");
+
                             if (DigestUtils.md5Hex(maybePhrase).equals(md5hash)) {
                                 System.out.printf("Found phrase `%s` with `%s`%n", maybePhrase, md5hash);
                                 // No more reason to search. Exit all loops.
