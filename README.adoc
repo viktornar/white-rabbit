@@ -54,6 +54,8 @@ To solve this task we need to understand what anagram is and how we can detect a
 
 === Solutions for anagram detection
 
+One option is to list off all permutations of the first string and see if any of them are equal to the second string. You can do this recursively or by using a library function that lists permutations. This is considered a "poor" solution because it misses significantly easier approaches and takes at least n! time in the worst case.
+
 .Brute force example
 [source,java]
 ----
@@ -129,8 +131,7 @@ public class Checker {
 }
 ----
 
-This final approach works by building a frequency histogram of the characters in each
-string and checking whether those histograms are the same. There are lots of variations on this theme: you can build the histogram as an array or as a hash table, you can build histograms for each string and compare them, or build a histogram for one and then destructively modify it for the second, etc. You can even think of counting sort as belonging to this family. These approaches typically use O(n) time and O(1) space, making them among the fastest approaches to solving this problem.
+The final approach is to build a frequency histogram of the characters in each string and checking whether those histograms are the same. There are lots of variations on this theme: you can build the histogram as an array or as a hash table, you can build histograms for each string and compare them, or build a histogram for one and then destructively modify it for the second, etc. You can even think of counting sort as belonging to this family. These approaches typically use O(n) time and O(1) space, making them among the fastest approaches to solving this problem.
 
 .Histogramming example
 [source,java]
@@ -189,12 +190,12 @@ By using word combination we will create possible combination of words in a phra
 ----
 
 ====
-Decided to use _CombinationIterable_, _PermutationIterable_ classes that were implemented by Marco Hutter. After analysing his code I decided that it is good enough, optimized, not depend on anything else, and I will not implement in better way. The fun fact is, that _CombinationIterable_ class founds not only all words combinations for phrase, but permutations as well :), but we still use _PermutationIterable_ class since it will work on a small subset of words that already meets anagram definition and such combination will decrease search time of phrase (when we have a big amount of data is not clear when we will get second combination of words that is a permutation for words combination that was found before while using _CombinationIterable_ only).
+Decided to use _CombinationIterable_, _PermutationIterable_ classes that were implemented by Marco Hutter. After analysing his code I decided that it is good enough, optimized, not depend on anything else, and I will not implement in better way. The fun fact is, that _CombinationIterable_ class founds not only all words combinations for the phrase, but all permutations as well :), but we still use _PermutationIterable_ class since it will work on a small subset of words that already meets anagram definition and such combination will decrease search time of phrase (when we have a big amount of data is not clear when we will get second combination of words that is a permutation for words combination that was found before while using _CombinationIterable_ only).
 ====
 
 === Solution for words grouping
 
-Grouping all words (in a word list) with other words in a list if it is possible to create a phrase that have letters less or equal to length of given phrase is quite easy and straightforward. For grouping, it is a good idea to use hash map collection since for key we can use a word and as value we can use array list of all other words that in combination with first one do not have more letters than given anagram phrase. For example if we have some phrase `group all` set of words _S={me, you, bicycle, tea, breakfast, all, words ....}_ we can group them  in this way:
+Grouping all words (in a word list) with other words in a list if it is possible to create a phrase that have letters less or equal to length of given phrase is quite easy and straightforward. For grouping, it is a good idea to use hash map collection since for key we can use a word and as value we can use array list of all other words that in combination with first one do not have more letters than given anagram phrase. For example, if we have a phrase, `group all`, and set of words _S={me, you, bicycle, tea, breakfast, all, words ....}_ we can group them  in this way:
 
 .Words grouping
 [source, text]
@@ -242,17 +243,17 @@ It would be nice to find a way to make the same grouping with java stream and la
 
 === Combination of all solutions
 
-Since we divided all problem into smaller pieces and have a solutions for anagram detection, combinations, permutations and grouping to solve everything is a painless task. Steps will be:
+Find a secret phrase is a painless task, since we divided all problem into smaller pieces and have a solutions for anagram detection, combinations, permutations and grouping. Steps will be:
 * Filter all words that have all letters in given anagram;
-* Group all words in list with combination of other words that have letters in sum less or equal to given aangarm phrase;
+* Group all words in list with combination of other words that have letters in sum less or equal to given anagarm phrase;
 * Iterate through group with all words with combination and find all combinations;
 * Iterate through all combinations and for every combination create permutations;
-* Iterate through all permutations and check if words from permutation can create anagram for given phrase;
-* If permutation words can create phrase anagram to given phrase check if md5 hash is equal to the given;
+* Iterate through all permutations and check if words from permutation can create the anagram for given phrase;
+* If permutation words can create the anagram to given phrase, check if md5 hash is equal to the given;
 
-Implementation of all these staps can be found in __Solver__ class. It should be easy to follow code and logic.
+Implementation of all these steps can be found in __Solver__ class. It should be easy to follow code and logic.
 
-.Example simplified code from Solver class
+.Example of simplified code from Solver class
 [source,java]
 ----
 public class Solver {
@@ -282,7 +283,7 @@ public class Solver {
 
 === Building project
 
-You need to know how gradle works and also need to hava java (e.g. OpenJDK Runtime Environment Corretto-11.0.10.9.1 ). I have used wrapped gradle so just go to root of project and:
+You need to know how gradle works and also need to have java (e.g. OpenJDK Runtime Environment Corretto-11.0.10.9.1 ). I have used wrapped gradle so just go to root of project and run:
 
 .Building project
 [source,bash]
@@ -309,9 +310,9 @@ java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "
 
 === Execution results
 
-For easy case we have phrase: *printout stout yawls*
+For easy case we have the phrase: *printout stout yawls*
 
-.Output for ease case with /usr/bin/time
+.Output for easy case with /usr/bin/time
 [source,bash]
 ----
 Trying to solve with args `poultry outwits ants`, `../../../wordlist`, `e4820b45d2277f3844eac66c903e84be`
@@ -342,7 +343,7 @@ Takes 11.705s to solve
 	Exit status: 0
 ----
 
-For medium case we have phrase: *ty outlaws printouts*
+For medium case we have the phrase: *ty outlaws printouts*
 
 .Output for medium case with /usr/bin/time
 [source,bash]
@@ -376,7 +377,7 @@ Takes 5.927s to solve
 ----
 
 
-For hard casewe have phrase: *poultry outwits ants*
+For hard case we have the phrase: *poultry outwits ants*
 
 .Output for hard case with /usr/bin/time
 [source,bash]
