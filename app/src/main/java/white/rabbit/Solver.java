@@ -40,29 +40,29 @@ public class Solver {
         System.out.printf("Takes %.3fs to solve%n", total);
     }
 
-    private static Map<String, List<String>> groupWordsWithPossibleCombinations(String anagramPhrase, int anagramLength, List<String> sortedWords) {
-        Map<String, List<String>> possibleWordsCombinations = new HashMap<>();
+    private static Map<String, List<String>> groupWordsWithPossibleCombinations(String anagramPhrase, int anagramLength, List<String> words) {
+        Map<String, List<String>> possibleWordsCombinationsForPhrase = new HashMap<>();
 
-        for (var i = 0; i < sortedWords.size(); i++) {
-            var word = sortedWords.get(i);
+        for (var i = 0; i < words.size(); i++) {
+            var word = words.get(i);
             List<String> combinations = new ArrayList<>();
 
-            for (var j = i + 1; j < sortedWords.size(); j++) {
-                var combination = sortedWords.get(j);
-                var possiblePhrase = word + combination;
+            for (var j = i + 1; j < words.size(); j++) {
+                var combination = words.get(j);
+                var possiblePartOfPhrase = word + combination;
 
-                if (possiblePhrase.length() <= anagramLength && AnagramCheckerUtil.inAnagrams(anagramPhrase, possiblePhrase)) {
+                if (possiblePartOfPhrase.length() <= anagramLength && AnagramCheckerUtil.inAnagrams(anagramPhrase, possiblePartOfPhrase)) {
                     combinations.add(combination);
                 }
 
             }
 
             if (combinations.size() > 0) {
-                possibleWordsCombinations.put(word, combinations);
+                possibleWordsCombinationsForPhrase.put(word, combinations);
             }
         }
 
-        return possibleWordsCombinations;
+        return possibleWordsCombinationsForPhrase;
     }
 
     private static List<String> getSortedWords(String anagramPhrase, List<String> words) {
