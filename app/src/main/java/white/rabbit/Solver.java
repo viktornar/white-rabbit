@@ -61,6 +61,7 @@ public class Solver {
                 possibleWordsCombinations.put(word, combinations);
             }
         }
+
         return possibleWordsCombinations;
     }
 
@@ -104,5 +105,4 @@ public class Solver {
             }
         }
     }
-
 }
