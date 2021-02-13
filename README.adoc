@@ -1,9 +1,9 @@
+:title: White rabbit
 :toc:
 :icons: font
 :source-highlighter: prettify
 :project_id: white-rabbit
-
-This project walk you through the process of solving anagram detection challenge.
+= White rabbit
 
 === For impatient
 
