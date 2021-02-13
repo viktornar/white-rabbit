@@ -3,9 +3,9 @@ package white.rabbit;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import white.rabbit.math.itertool.CombinationIterable;
+import white.rabbit.math.itertool.PermutationIterable;
 import white.rabbit.utils.AnagramCheckerUtil;
 import white.rabbit.utils.FileUtil;
-import white.rabbit.utils.PermutationsUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,21 +75,21 @@ public class Solver {
             String anagramWords, Map<String, List<String>> possibleWordsCombinations, String md5hash) {
 
         searchloop:
-        for (int i = 2; i <= MAX_WORD_COUNT; i++) {
-            for (Map.Entry<String, List<String>> entry : possibleWordsCombinations.entrySet()) {
-                String word = entry.getKey();
-                List<String> v = entry.getValue().stream().sorted().distinct().collect(Collectors.toList());
-                Iterable<List<String>> combinations = new CombinationIterable(i, v);
+        for (var i = 2; i <= MAX_WORD_COUNT; i++) {
+            for (var entry : possibleWordsCombinations.entrySet()) {
+                var word = entry.getKey();
+                var v = entry.getValue().stream().sorted().distinct().collect(Collectors.toList());
+                Iterable<List<String>> combinations = new CombinationIterable<>(i, v);
                 for (List<String> cw : combinations) {
                     cw.add(word);
                     String phrase = StringUtils.join(cw, "");
 
                     if (AnagramCheckerUtil.areAnagrams(anagramWords, phrase)) {
-                        for (List<String> permutation : PermutationsUtil.makePermutations(cw)) {
+                        var permutations = new PermutationIterable<>(cw);
+                        for (var permutation : permutations) {
                             String maybePhrase = StringUtils.join(permutation, " ");
                             if (DigestUtils.md5Hex(maybePhrase).equals("e4820b45d2277f3844eac66c903e84be")) {
                                 System.out.printf("Found phrase `%s` with `%s`%n", maybePhrase, md5hash);
-                                System.out.println("e4820b45d2277f3844eac66c903e84be");
                                 // No more reason to search. Exit all loops.
                                 break searchloop;
                             }

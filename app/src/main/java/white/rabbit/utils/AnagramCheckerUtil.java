@@ -35,5 +35,4 @@ public class AnagramCheckerUtil {
         }
         return true;
     }
-
 }
