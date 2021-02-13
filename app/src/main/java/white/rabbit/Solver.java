@@ -36,7 +36,7 @@ public class Solver {
         var sortedWords = getFilteredAndSortedWords(anagramPhrase, words);
         var possibleWordsCombinations = groupWordsWithPossibleCombinations(anagramPhrase, anagramLength, sortedWords);
 
-        return searchSecretPhrase(anagramWords, possibleWordsCombinations, md5hash);
+        return searchForSecretPhrase(anagramWords, possibleWordsCombinations, md5hash);
     }
 
     static Map<String, List<String>> groupWordsWithPossibleCombinations(String phrase, int lettersCountInPhrase, List<String> words) {
@@ -72,9 +72,8 @@ public class Solver {
                 .sorted().collect(Collectors.toList());
     }
 
-    static Optional<String> searchSecretPhrase(
+    static Optional<String> searchForSecretPhrase(
             String anagramWords, Map<String, List<String>> possibleWordsCombinations, String md5hash) {
-
         Optional<String> secretPhrase = Optional.empty();
 
         searchloop:

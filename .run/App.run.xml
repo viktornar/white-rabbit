@@ -2,7 +2,7 @@
   <configuration default="false" name="App" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="white.rabbit.App" />
     <module name="white-rabbit.app.main" />
-    <option name="PROGRAM_PARAMETERS" value="--anagram-phrase &quot;poultry outwits ants&quot; --word-list-location wordlist --md5hash e4820b45d2277f3844eac66c903e84be" />
+    <option name="PROGRAM_PARAMETERS" value="--anagram-phrase &quot;poultry outwits ants&quot; --word-list-location wordlist --md5hash 665e5bcb0c20062fe8abaaf4628bb154" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="white.rabbit.*" />
