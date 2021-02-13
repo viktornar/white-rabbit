@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AnagramCheckerUtil {
+    private AnagramCheckerUtil() {
+    }
+
     public static boolean areAnagrams(String left, String right) {
         String l = StringUtils.remove(left, " ");
         String r = StringUtils.remove(right, " ");
