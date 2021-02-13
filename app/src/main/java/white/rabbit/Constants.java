@@ -5,7 +5,6 @@ public class Constants {
 
     }
 
-    public static final String ANAGRAM_PHRASE = "anagram-phrase";
     public static final String WORD_LIST_LOCATION = "word-list-location";
     public static final String MD5HASH = "md5hash";
     public static final String ANAGRAM_DETECTION_TYPE = "anagram-detection-type";

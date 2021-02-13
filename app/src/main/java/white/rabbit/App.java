@@ -1,12 +1,10 @@
 package white.rabbit;
 
-import white.rabbit.anagram.DetectionType;
 import white.rabbit.utils.CliUtil;
 
 import java.util.Map;
 
 import static white.rabbit.Constants.*;
-import static white.rabbit.anagram.DetectionType.Histogram;
 
 public class App {
     public static void main(String[] args) {
@@ -14,16 +12,8 @@ public class App {
         String anagramPhrase = arguments.get(ANAGRAM_PHRASE);
         String wordlistLocation = arguments.get(WORD_LIST_LOCATION);
         String md5hash = arguments.get(MD5HASH);
-        String anagramDetectionType =
-                arguments.get(ANAGRAM_DETECTION_TYPE) != null ?
-                        arguments.get(ANAGRAM_DETECTION_TYPE) : Histogram.toString();
 
-        if (anagramPhrase == null ||
-                wordlistLocation == null ||
-                md5hash == null) {
-            System.out.printf(
-                    "--%s - was not specified. Usage example: --%s [anagram phrase]. Program will be terminated%n",
-                    ANAGRAM_PHRASE, ANAGRAM_PHRASE);
+        if (wordlistLocation == null || md5hash == null) {
             System.out.println("or");
             System.out.printf(
                     "--%s - was not specified. Usage example: --%s [wordlist location]. Program will be terminated%n",
@@ -34,6 +24,6 @@ public class App {
             System.exit(0);
         }
 
-        new Solver().solve(anagramPhrase, wordlistLocation, md5hash);
+        Solver.solve(anagramPhrase, wordlistLocation, md5hash);
     }
 }
