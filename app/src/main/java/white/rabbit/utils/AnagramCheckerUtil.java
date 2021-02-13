@@ -1,17 +1,23 @@
-package white.rabbit.anagram;
+package white.rabbit.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class HistogramBasedChecker implements Checker {
-    @Override
-    public boolean areAnagrams(String left, String right) {
+public class AnagramCheckerUtil {
+    public static boolean areAnagrams(String left, String right) {
         String l = StringUtils.remove(left, " ");
         String r = StringUtils.remove(right, " ");
 
         if (l.length() != r.length()) return false;
+
+        return inAnagrams(left, right);
+    }
+
+    public static boolean inAnagrams(String left, String right) {
+        String l = StringUtils.remove(left, " ");
+        String r = StringUtils.remove(right, " ");
 
         Map<Character, Integer> frequencies = new HashMap<>();
 
@@ -29,4 +35,5 @@ public class HistogramBasedChecker implements Checker {
         }
         return true;
     }
+
 }
