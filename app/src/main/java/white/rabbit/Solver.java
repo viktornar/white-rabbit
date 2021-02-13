@@ -88,7 +88,7 @@ public class Solver {
                         var permutations = new PermutationIterable<>(cw);
                         for (var permutation : permutations) {
                             String maybePhrase = StringUtils.join(permutation, " ");
-                            if (DigestUtils.md5Hex(maybePhrase).equals("e4820b45d2277f3844eac66c903e84be")) {
+                            if (DigestUtils.md5Hex(maybePhrase).equals(md5hash)) {
                                 System.out.printf("Found phrase `%s` with `%s`%n", maybePhrase, md5hash);
                                 // No more reason to search. Exit all loops.
                                 break searchloop;
