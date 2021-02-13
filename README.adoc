@@ -5,12 +5,24 @@
 
 This project walk you through the process of solving anagram detection challenge.
 
+=== For impatient
+
+Got to project root bin directory and run.
+
+.Executing pre-builded jar
+[source,bash]
+----
+# For easy case
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location ".../wordlist" --md5hash e4820b45d2277f3844eac66c903e84be
+# For medium case
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../wordlist" --md5hash 23170acc097c24edb98fc5488ab033fe
+# For hard case
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../wordlist" --md5hash 665e5bcb0c20062fe8abaaf4628bb154
+----
+
 === Task
 
-A secret message exist, but it is hidden.
-Find the secret phrase that will let you to see it.
-
-Here is a couple of important hints to help you out:
+A secret message exist, but it is hidden. Find the secret phrase that will let you to see it. Here is a couple of important hints to help you out:
 
 * An anagram of the phrase is: "poultry outwits ants"
 * There are three levels of difficulty to try your skills with
@@ -26,14 +38,19 @@ I have decided to use Java 11 since I'm working with it right now and Java have 
 
 === Helper utils
 
-In this task I have used some utils classes for file reading, logging and so on.
-Also used apache common library for comparing md5 sum.
+In this task I have used some utils classes from other developer project (www.javagl.de) for combination and permutation stuff. Used my own file reading and cli parsing utils from my own project. At last, but not least I used apache common and codecs libraries for comparing md5 hashes, string operations (e.g. replacing, removing chars).
 
 === Problem statement
 
-To solve this task we need to understand what anagram is and how we can detect anagram.
-Two strings are said to be anagrams of one another if you can turn the first string into the second by rearranging its letters.
-For example, "table" and "bleat" are anagrams, as are "tear" and "rate".
+To solve this task we need to understand what anagram is and how we can detect anagrams. Two strings are said to be anagrams of one another if you can turn the first string into the second by rearranging its letters. For example, "table" and "bleat" are anagrams, as are "tear" and "rate". It is also true that "monkeys write" and "new york times" are anagrams. Since we have anagram for phrase "poultry outwits ants" and word list (dictionary) we need to iterate through all words and do combinations of those words with all possible permutations that creates phrase and is an anagram to given phrase. We also need to compare all detected anagrams with given one to one of the md5 hash. Another big headache in this problem is to operate through a big amount of words. The only solutions of optimization for that come to me is:
+
+* Remove all words that do not have letters in given anagram. This will let for us to remove noises (extraneous words) in words list.
+* From my practices, most of the algorithms works faster if input data is sorted, so we need to try sort everything :D
+* Do not use recursive methods, since it will increase memory usage, can cause methods call frame overflow and honesty I didn't see any algorithms with good performance that have used recursive approach.
+* For word combination and permutation use java iterators since they are lazy and are memory optimized. It means that while elements are not requested they are not filtered and returned to you. Thanks for Marco Hutter for his work for implementation CombinationIterable and PermutationIterable classes for creating combinations and permutations of a certain number
+ of elements of a given set in quite optimal way. This will also let for me to not invent a bicycle.
+* Group all words (in a word list) with other words in a list if it is possible to create a phrase that have letters less or equal to length of given phrase. We also do not need to take into account spaces while comparing length of letters. Why it is a good idea to group every word with all other words that can make phrase? It will reduce an amount of data for CombinationIterable object, and we will need less time for creating and iterating thought combination of words that can create possible anagram phrase. This statement is very important since it decrease time of searching phrase drastically.
+
 
 === Solutions for anagram detection
 
@@ -133,11 +150,261 @@ public boolean areAnagrams(String left, String right) {
         }
 
         for (int i = 0; i < right.length(); i++) {
-            if (!frequencies.containsKey(right.charAt(i))) return false;
+            if (!frequencies.containsKey(right.charAt(i)) || frequencies.get(r.charAt(i)) == 0) return false;
+            frequencies.put(right.charAt(i), frequencies.get(right.charAt(i)) - 1);
         }
         return true;
     }
 }
 ----
 
-Decided to implement counting characters, histogram based and sorting based anagram detection.
+Decided to use histogram based anagram detection since it is most effective according literature (https://web.stanford.edu/class/cs9/sample_probs/Anagrams.pdf)
+
+=== Solutions for word combinations and permutations
+
+==== Word combinations
+It is important to have a chance to create all possible combination of words subset in given words set. If we have words set: _S = { A,B,C,D,E, ... }_, _n = |S| = ∞_, we need to create all possible phrases consisting of 2, 3, 4, 5 words (_k = 2, 3, 4, 5_):
+
+.Words combination example for n=3, k=2
+[source,txt]
+----
+[A, A]
+[A, B]
+[A, C]
+----
+
+==== Word permutation
+
+By using word combination we will create possible combination of words in a phrase, but it will not create all possible words positions in that phrase. It means that we need to create a permutations. For a set _S_ with _n=|S|_, there are _m=n!_ different permutations:
+
+.Words permutation example for S = { A,B,C }, n = |S| = 3
+[source,txt]
+----
+[A, B, C]
+[A, C, B]
+[B, A, C]
+[B, C, A]
+[C, A, B]
+[C, B, A]
+----
+
+====
+Decided to use _CombinationIterable_, _PermutationIterable_ classes that were implemented by Marco Hutter. After analysing his code I decided that it is good enough, optimized, not depend on anything else, and I will not implement in better way. The fun fact is, that _CombinationIterable_ class founds not only all words combinations for phrase, but permutations as well :), but we still use _PermutationIterable_ class since it will work on a small subset of words that already meets anagram definition and such combination will decrease search time of phrase (when we have a big amount of data is not clear when we will get second combination of words that is a permutation for words combination that was found before while using _CombinationIterable_ only).
+====
+
+=== Solution for words grouping
+
+Grouping all words (in a word list) with other words in a list if it is possible to create a phrase that have letters less or equal to length of given phrase is quite easy and straightforward. For grouping, it is a good idea to use hash map collection since for key we can use a word and as value we can use array list of all other words that in combination with first one do not have more letters than given anagram phrase. For example if we have some phrase `group all` set of words _S={me, you, bicycle, tea, breakfast, all, words ....}_ we can group them  in this way:
+
+.Words grouping
+[source, text]
+----
+{
+    me: [you, tea, words, ...],
+    you: [tea, all, words, ...],
+    bicycle: [...],
+    tea: [all, words ...],
+    breakfast: [...],
+    ...
+}
+----
+
+.Example of pseudo code
+[source, txt]
+----
+var possibleCombinations = new HashMap<>();
+
+for (var i = 0; i < words.size(); i++) {
+    var word = words.get(i);
+    var combinations = new ArrayList<>();
+
+    for (var j = i + 1; j < words.size(); j++) {
+       var combination = words.get(j);
+       var possiblePartOfPhrase = word + combination;
+
+       if (possiblePartOfPhrase.length() <= anagramLength && inAnagrams(anagramPhrase, possiblePartOfPhrase)) {
+           combinations.add(combination);
+       }
+
+   }
+
+   if (combinations.size() > 0) {
+       possiblePartOfPhrase.put(word, combinations);
+   }
+}
+
+possibleCombinations.put(word, combinations);
+----
+
+====
+It would be nice to find a way to make the same grouping with java stream and lambda functions, but I'm afraid it can make code less readable.
+====
+
+=== Combination of all solutions
+
+Since we divided all problem into smaller pieces and have a solutions for anagram detection, combinations, permutations and grouping to solve everything is a painless task. Steps will be:
+* Filter all words that have all letters in given anagram;
+* Group all words in list with combination of other words that have letters in sum less or equal to given aangarm phrase;
+* Iterate through group with all words with combination and find all combinations;
+* Iterate through all combinations and for every combination create permutations;
+* Iterate through all permutations and check if words from permutation can create anagram for given phrase;
+* If permutation words can create phrase anagram to given phrase check if md5 hash is equal to the given;
+
+Implementation of all these staps can be found in __Solver__ class. It should be easy to follow code and logic.
+
+.Example simplified code from Solver class
+[source,java]
+----
+public class Solver {
+    public static void solve(
+            String anagramPhrase, String wordlistLocation, String md5hash) {
+
+        System.out.printf(
+                "Trying to solve with args `%s`, `%s`, `%s` %n",
+                anagramPhrase, wordlistLocation, md5hash);
+
+        var before = System.currentTimeMillis();
+        var words = FileUtil.readData(wordlistLocation);
+
+        if (words.size() == 0) {
+            throw new RuntimeException("No words in list. Impossible to solve.");
+        }
+
+        var anagramWords = StringUtils.remove(anagramPhrase, " ");
+        var anagramLength = anagramWords.length();
+        var sortedWords = getSortedWords(anagramPhrase, words);
+        var possibleWordsCombinations = groupWordsWithPossibleCombinations(anagramPhrase, anagramLength, sortedWords);
+        searchAndPrintPhrase(anagramWords, possibleWordsCombinations, md5hash);
+    }
+    // Other code part omitted.
+}
+----
+
+=== Building project
+
+You need to know how gradle works and also need to hava java (e.g. OpenJDK Runtime Environment Corretto-11.0.10.9.1 ). I have used wrapped gradle so just go to root of project and:
+
+.Building project
+[source,bash]
+----
+./gradlew build
+----
+
+If everything is ok you should get something like that `BUILD SUCCESSFUL in 2s`
+
+=== Running project
+
+.Runing jar after build
+[source,bash]
+----
+# Do not forgot to build first
+cd app/build/libs
+# For easy case
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../../../wordlist" --md5hash e4820b45d2277f3844eac66c903e84be
+# For medium case
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "./../../wordlist" --md5hash 23170acc097c24edb98fc5488ab033fe
+# For hard case
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "./../../wordlist" --md5hash 665e5bcb0c20062fe8abaaf4628bb154
+----
+
+=== Execution results
+
+For easy case we have phrase: *printout stout yawls*
+
+.Output for ease case with /usr/bin/time
+[source,bash]
+----
+Trying to solve with args `poultry outwits ants`, `../../../wordlist`, `e4820b45d2277f3844eac66c903e84be`
+Found phrase `printout stout yawls` with `e4820b45d2277f3844eac66c903e84be`
+Takes 12.296s to solve
+Command being timed: "java -jar app.jar --anagram-phrase poultry outwits ants --word-list-location ../../../wordlist --md5hash e4820b45d2277f3844eac66c903e84be"
+User time (seconds): 14.12
+System time (seconds): 0.24
+Percent of CPU this job got: 115%
+Elapsed (wall clock) time (h:mm:ss or m:ss): 0:12.44
+Average shared text size (kbytes): 0
+Average unshared data size (kbytes): 0
+Average stack size (kbytes): 0
+Average total size (kbytes): 0
+Maximum resident set size (kbytes): 871304
+Average resident set size (kbytes): 0
+Major (requiring I/O) page faults: 0
+Minor (reclaiming a frame) page faults: 217506
+Voluntary context switches: 3978
+Involuntary context switches: 714
+Swaps: 0
+File system inputs: 144
+File system outputs: 216
+Socket messages sent: 0
+Socket messages received: 0
+Signals delivered: 0
+Page size (bytes): 4096
+Exit status: 0
+----
+
+For medium case we have phrase: *ty outlaws printouts*
+
+.Output for medium case with /usr/bin/time
+[source,bash]
+----
+Trying to solve with args `poultry outwits ants`, `../../../wordlist`, `23170acc097c24edb98fc5488ab033fe`
+Found phrase `ty outlaws printouts` with `23170acc097c24edb98fc5488ab033fe`
+Takes 6.650s to solve
+Command being timed: "java -jar app.jar --anagram-phrase poultry outwits ants --word-list-location ../../../wordlist --md5hash 23170acc097c24edb98fc5488ab033fe"
+User time (seconds): 8.31
+System time (seconds): 0.24
+Percent of CPU this job got: 126%
+Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.79
+Average shared text size (kbytes): 0
+Average unshared data size (kbytes): 0
+Average stack size (kbytes): 0
+Average total size (kbytes): 0
+Maximum resident set size (kbytes): 892652
+Average resident set size (kbytes): 0
+Major (requiring I/O) page faults: 0
+Minor (reclaiming a frame) page faults: 221307
+Voluntary context switches: 2735
+Involuntary context switches: 653
+Swaps: 0
+File system inputs: 0
+File system outputs: 96
+Socket messages sent: 0
+Socket messages received: 0
+Signals delivered: 0
+Page size (bytes): 4096
+Exit status: 0
+----
+
+
+For hard casewe have phrase: *poultry outwits ants*
+
+.Output for hard case with /usr/bin/time
+[source,bash]
+----
+Trying to solve with args `poultry outwits ants`, `../../../wordlist`, `665e5bcb0c20062fe8abaaf4628bb154`
+Found phrase `wu lisp not statutory` with `665e5bcb0c20062fe8abaaf4628bb154`
+Takes 1236.759s to solve
+Command being timed: "java -jar app.jar --anagram-phrase poultry outwits ants --word-list-location ../../../wordlist --md5hash 665e5bcb0c20062fe8abaaf4628bb154"
+User time (seconds): 1250.70
+System time (seconds): 1.82
+Percent of CPU this job got: 101%
+Elapsed (wall clock) time (h:mm:ss or m:ss): 20:36.90
+Average shared text size (kbytes): 0
+Average unshared data size (kbytes): 0
+Average stack size (kbytes): 0
+Average total size (kbytes): 0
+Maximum resident set size (kbytes): 899360
+Average resident set size (kbytes): 0
+Major (requiring I/O) page faults: 0
+Minor (reclaiming a frame) page faults: 227127
+Voluntary context switches: 261189
+Involuntary context switches: 21260
+Swaps: 0
+File system inputs: 0
+File system outputs: 18304
+Socket messages sent: 0
+Socket messages received: 0
+Signals delivered: 0
+Page size (bytes): 4096
+Exit status: 0
+----
