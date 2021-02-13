@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 import static white.rabbit.Constants.MAX_WORD_COUNT;
 
 public class Solver {
+    private Solver() {
+
+    }
+
     public static Optional<String> solve(
             String anagramPhrase, String wordlistLocation, String md5hash) {
 
