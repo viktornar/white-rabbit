@@ -7,7 +7,7 @@
 
 === For impatient
 
-Got to project root bin directory and run.
+Go to project root bin directory and run.
 
 .Executing pre-builded jar
 [source,bash]
