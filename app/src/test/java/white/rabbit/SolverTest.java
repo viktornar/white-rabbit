@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SolverTest {
 
-    @Disabled("Intend to be run by hand since it take a lot of time. Don' want to have a long build time.")
+    @Disabled("Intend to be run by hand since it can take a lot of time. Don't want to have a long build time.")
     @Test
     void shouldSolveWithGivenWordlist() {
         var secretPhrase = Solver.solve("poultry outwits ants", "../wordlist", "23170acc097c24edb98fc5488ab033fe");
