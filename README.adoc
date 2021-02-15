@@ -263,12 +263,6 @@ Implementation of all these steps can be found in __Solver__ class. It should be
 public class Solver {
     public static void solve(
             String anagramPhrase, String wordlistLocation, String md5hash) {
-
-        System.out.printf(
-                "Trying to solve with args `%s`, `%s`, `%s` %n",
-                anagramPhrase, wordlistLocation, md5hash);
-
-        var before = System.currentTimeMillis();
         var words = FileUtil.readData(wordlistLocation);
 
         if (words.size() == 0) {
