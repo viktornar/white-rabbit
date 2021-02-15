@@ -407,3 +407,7 @@ Takes 1312.068s to solve
 	Page size (bytes): 4096
 	Exit status: 0
 ----
+
+=== Improvements
+
+I believe that it is possible to use java threading to execute searching of phrase in concurrent mode and probably this could decrease time needed to find phrase. It would be nice to implement such improvement in future and check this statement.
