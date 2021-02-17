@@ -24,6 +24,7 @@ public class App {
             System.out.println("or");
             System.out.printf("--%s - was not specified. Usage example: --%s [md5 hash]. Program will be terminated%n",
                     MD5HASH, MD5HASH);
+            // Force to exit all threads. We are not playing nice with threads API so we need to force exit.
             System.exit(0);
         }
 
@@ -37,5 +38,6 @@ public class App {
         var after = System.currentTimeMillis();
         var total = (after - before) / 1000.0;
         System.out.printf("Takes %.3fs to solve%n", total);
+        System.exit(0);
     }
 }

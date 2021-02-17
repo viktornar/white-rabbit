@@ -13,7 +13,7 @@ Go to project root bin directory and run.
 [source,bash]
 ----
 # For easy case
-java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location ".../wordlist" --md5hash e4820b45d2277f3844eac66c903e84be
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../wordlist" --md5hash e4820b45d2277f3844eac66c903e84be
 # For medium case
 java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../wordlist" --md5hash 23170acc097c24edb98fc5488ab033fe
 # For hard case
@@ -301,9 +301,9 @@ cd app/build/libs
 # For easy case
 java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../../../wordlist" --md5hash e4820b45d2277f3844eac66c903e84be
 # For medium case
-java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "./../../wordlist" --md5hash 23170acc097c24edb98fc5488ab033fe
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../../../wordlist" --md5hash 23170acc097c24edb98fc5488ab033fe
 # For hard case
-java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "./../../wordlist" --md5hash 665e5bcb0c20062fe8abaaf4628bb154
+java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../../../wordlist" --md5hash 665e5bcb0c20062fe8abaaf4628bb154
 ----
 
 === Execution results
@@ -374,7 +374,6 @@ Takes 5.927s to solve
 	Exit status: 0
 ----
 
-
 For hard case we have the phrase: *poultry outwits ants*
 
 .Output for hard case with /usr/bin/time
@@ -408,6 +407,49 @@ Takes 1312.068s to solve
 	Exit status: 0
 ----
 
-=== Improvements
+=== Improvements / Multi-threading
 
-I believe that it is possible to use java threading to execute searching of phrase in concurrent mode and probably this could decrease time needed to find phrase. It would be nice to implement such improvement in future and check this statement.
+It is possible to use java threading to execute searching of phrase in a concurrent mode and this could decrease time needed to find phrase. I have implemented proof of concept for solution that use threading for finding secret phrase in _concurrent_ branch. It uses threading api in not nice way, but it lets for me to find a secret phrase for hard case in 20-50 seconds (depends on how PC is overload):
+
+.Output for hard case with /usr/bin/time when multi threading is used
+[source,bash]
+----
+Trying to solve with args `poultry outwits ants`, `../../../wordlist`, `665e5bcb0c20062fe8abaaf4628bb154`
+Found phrase `wu lisp not statutory` with `665e5bcb0c20062fe8abaaf4628bb154`
+Takes 24.583s to solve
+	Command being timed: "java -jar app.jar --anagram-phrase poultry outwits ants --word-list-location ../../../wordlist --md5hash 665e5bcb0c20062fe8abaaf4628bb154"
+	User time (seconds): 177.16
+	System time (seconds): 1.01
+	Percent of CPU this job got: 719%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.75
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1589568
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 398557
+	Voluntary context switches: 33006
+	Involuntary context switches: 23765
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 536
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+----
+
+If you want to try multithreading case just switch to parallel branch with git, build with gradle and run jar.
+
+.Switched to concurrent branch and executing jar
+[source,bash]
+----
+$ git checkout concurrent
+$ ./gradlew build
+$ cd app/build/libs
+$ java -jar app.jar --anagram-phrase "poultry outwits ants" --word-list-location "../../../wordlist" --md5hash 665e5bcb0c20062fe8abaaf4628bb154
+----
+

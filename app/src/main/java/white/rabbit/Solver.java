@@ -8,12 +8,17 @@ import white.rabbit.utils.AnagramCheckerUtil;
 import white.rabbit.utils.FileUtil;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static white.rabbit.Constants.MAX_WORD_COUNT;
 
 public class Solver {
-    private Solver() {
+     Solver() {
 
     }
 
@@ -74,37 +79,60 @@ public class Solver {
 
     static Optional<String> searchForSecretPhrase(
             String anagramWords, Map<String, List<String>> possibleWordsCombinations, String md5hash) {
-        Optional<String> secretPhrase = Optional.empty();
+
+        AtomicReference<Optional<String>> secretPhrase = new AtomicReference<>(Optional.empty());
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+
+        var pwc = Collections.synchronizedMap(possibleWordsCombinations);
 
         searchloop:
         for (var i = 2; i <= MAX_WORD_COUNT; i++) {
+            for (var entry : pwc.entrySet()) {
+                atomicInteger.set(i);
+                ExecutorService e = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-            for (var entry : possibleWordsCombinations.entrySet()) {
-                var word = entry.getKey();
-                var v = entry.getValue().stream().sorted().distinct().collect(Collectors.toList());
-                Iterable<List<String>> combinations = new CombinationIterable<>(i, v);
+                e.execute(() -> {
+                    var word = entry.getKey();
+                    var v = entry.getValue().stream().sorted().distinct().collect(Collectors.toList());
 
-                for (List<String> cw : combinations) {
-                    cw.add(word);
-                    var phrase = StringUtils.join(cw, "");
+                    Iterable<List<String>> combinations = new CombinationIterable<>(atomicInteger.get(), v);
 
-                    if (AnagramCheckerUtil.areAnagrams(anagramWords, phrase)) {
-                        var permutations = new PermutationIterable<>(cw);
+                    for (List<String> cw : combinations) {
+                        cw.add(word);
+                        var phrase = StringUtils.join(cw, "");
 
-                        for (var permutation : permutations) {
-                            var maybePhrase = StringUtils.join(permutation, " ");
+                        if (AnagramCheckerUtil.areAnagrams(anagramWords, phrase)) {
+                            var permutations = new PermutationIterable<>(cw);
 
-                            if (DigestUtils.md5Hex(maybePhrase).equals(md5hash)) {
-                                secretPhrase = Optional.of(maybePhrase);
-                                // No more reason to search. Exit from all loops.
-                                break searchloop;
+                            for (var permutation : permutations) {
+                                var maybePhrase = StringUtils.join(permutation, " ");
+
+                                if (DigestUtils.md5Hex(maybePhrase).equals(md5hash)) {
+                                    secretPhrase.set(Optional.of(maybePhrase));
+                                    e.shutdown();
+                                    try {
+                                        if (!e.awaitTermination(1, TimeUnit.SECONDS)) {
+                                            if (!e.awaitTermination(1, TimeUnit.SECONDS))
+                                                System.err.println("Pool did not terminate");
+                                        }
+                                    } catch (InterruptedException ie) {
+                                        e.shutdownNow();
+                                        Thread.currentThread().interrupt();
+                                    }
+                                    break;
+                                }
                             }
                         }
                     }
+                });
+
+                if (secretPhrase.get().isPresent()) {
+                    // No more reason to search, exit.
+                    break searchloop;
                 }
             }
         }
 
-        return secretPhrase;
+        return secretPhrase.get();
     }
 }
