@@ -409,7 +409,7 @@ Takes 1312.068s to solve
 
 === Improvements / Multi-threading
 
-It is possible to use java threading to execute searching of phrase in a concurrent mode and this could decrease time needed to find phrase. I have implemented proof of concept for solution that use threading for finding secret phrase in _concurrent_ branch. It uses threading api in not nice way, but it lets for me to find a secret phrase for hard case in 20-50 seconds (depends on how PC is overload):
+It is possible to use java threading to execute searching of phrase in a concurrent mode and this will decrease time needed to find phrase. I have implemented proof of concept for solution that use threading for finding secret phrase in _concurrent_ branch. It uses threading api in not nice way, but it lets for me to find a secret phrase for hard case in 20-50 seconds (depends on how PC is overloaded):
 
 .Output for hard case with /usr/bin/time when multi threading is used
 [source,bash]
@@ -444,7 +444,7 @@ Takes 24.583s to solve
 
 If you want to try multithreading case just switch to parallel branch with git, build with gradle and run jar.
 
-.Switched to concurrent branch and executing jar
+.Switching to concurrent branch and executing jar
 [source,bash]
 ----
 $ git checkout concurrent
